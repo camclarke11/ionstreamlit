@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-from scipy.stats import linregress, t
+from scipy.stats import linregress
 
 # Introduction
 st.title('Ionising Radiation Experiment Analysis')
@@ -36,19 +36,39 @@ if uploaded_file is not None:
         ax.plot(df['Inverse Square Distance'], regression_result.intercept + regression_result.slope * df['Inverse Square Distance'], 'r', label='Fitted line')
         ax.set_xlabel('Inverse Square of Distance (1/m^2)')
         ax.set_ylabel('Count Rate (counts/s)')
-        ax.set_title('Linear Regression with linregress')
         ax.legend()
         st.pyplot(fig)
 
-        # Display Regression Results
+        # Display Regression Results and explanations
         st.subheader('Regression Analysis')
         st.write(f"Slope (proportional to intensity): {regression_result.slope:.4f}")
-        st.write(f"Intercept: {regression_result.intercept:.4f}")
-        st.write(f"R-squared value: {regression_result.rvalue**2:.4f}")
-        st.write(f"p-value of the regression: {regression_result.pvalue:.4f}")
-        st.write(f"Standard error of the estimate: {regression_result.stderr:.4f}")
+        st.markdown("""
+        **Slope (proportional to intensity):** Represents the change in count rate per unit change in the inverse square of distance. 
+        A higher slope indicates a stronger relationship between the distance and count rate.
+        """)
 
-        # Conclusion
+        st.write(f"Intercept: {regression_result.intercept:.4f}")
+        st.markdown("""
+        **Intercept:** The expected count rate when the inverse square distance is zero. Theoretically, it's an extrapolation since the inverse square distance cannot be zero.
+        """)
+
+        st.write(f"R-squared value: {regression_result.rvalue**2:.4f}")
+        st.markdown("""
+        **R-squared value:** Indicates the proportion of the variance in the count rate that is predictable from the inverse square distance. 
+        Values closer to 1 suggest a stronger relationship.
+        """)
+
+        st.write(f"p-value of the regression: {regression_result.pvalue:.4f}")
+        st.markdown("""
+        **p-value of the regression:** Assesses the significance of the slope. A p-value below 0.05 typically indicates strong evidence against the null hypothesis, suggesting a significant relationship.
+        """)
+
+        st.write(f"Standard error of the estimate: {regression_result.stderr:.4f}")
+        st.markdown("""
+        **Standard error of the estimate:** Measures the accuracy of the regression model's predictions. Lower values indicate a model that more accurately fits the data.
+        """)
+
+        # Conclusion based on R-squared value
         if regression_result.rvalue**2 > 0.9:
             st.markdown("### The data strongly supports the inverse square law.")
         else:
@@ -58,5 +78,4 @@ if uploaded_file is not None:
 else:
     st.info('Awaiting CSV file to be uploaded for analysis.')
 
-# Additional sections can be added here to discuss the theory behind linear regression,
-# assumptions, and how they apply to the Ionising Radiation experiment.
+# You can continue to add additional sections to provide more insights or discuss related topics.
